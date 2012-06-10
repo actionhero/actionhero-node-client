@@ -23,7 +23,6 @@ A.on("keep-alive", function(){
 
 A.on("end", function(){
 	console.log("Connection Closed");
-	process.exit();
 });
 
 A.on("connected", function(){
@@ -33,15 +32,19 @@ A.on("connected", function(){
 		console.log(" > uptimeSeconds: " + apiResposne.stats.uptimeSeconds);
 		console.log(" > numberOfLocalSocketRequests: " + apiResposne.stats.socketServer.numberOfLocalSocketRequests);
 
-			// Action should have an error, not all the params are provided
-			A.action("cacheTest", function(apiResposne){
-				console.log("cacheTest (try 1) Error: " + apiResposne.error);
+		// Action should have an error, not all the params are provided
+		A.action("cacheTest", function(apiResposne){
+			console.log("cacheTest (try 1) Error: " + apiResposne.error);
 
-					// Action should be OK now
-					params = { key: "mykey", value: "myValue" };
-					A.actionWithParams("cacheTest", params, function(apiResposne){
-						console.log("cacheTest (try 2) Error: " + apiResposne.error);
-					})
+			// Action should be OK now
+			params = { key: "mykey", value: "myValue" };
+			A.actionWithParams("cacheTest", params, function(apiResposne){
+				console.log("cacheTest (try 2) Error: " + apiResposne.error);
+
+				//cool, lets leave
+				A.disconnect();
+				setTimeout(process.exit, 1000); // leave some time for the "end" even to fire
 			});
+		});
 	});
 });
