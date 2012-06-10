@@ -1,0 +1,20 @@
+{
+  "author": "Evan Tahler <evantahler@gmail.com>",
+  "name": "actionHeroClient",
+  "description": "a way for a nodeJS app to talk to an actionHero server",
+  "version": "0.0.1",
+  "homepage": "https://github.com/evantahler/actionHeroNodeClient",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/evantahler/actionHeroNodeClient.git"
+  },
+  "main": "actionHeroClient",
+  "keywords": ["socket", "tcp", "actionHero"],
+  "engines": {
+    "node": ">=0.4.x"
+  },
+  "dependencies": {},
+  "scripts": {
+    "test": "node test.js"
+  }
+}
