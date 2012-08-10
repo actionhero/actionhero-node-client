@@ -1,5 +1,7 @@
 #actionHeroClient (for nodeJS)
 
+[![Endore Me](http://api.coderwall.com/evantahler/endorsecount.png)](http://coderwall.com/evantahler)
+
 This library makes it easy for one nodeJS process to talk to a remote [actionHero](http://actionherojs.com/) server.
 
 This library makes use of actionHero's TCP socket connections to enable fast, stateful connections.  This library also allows for many concurrent and asynchronous requests to be running in parallel by making use of actionHero's message counter.  This library is at times event-driven, and for functions that makes sense to do so, callback based.
