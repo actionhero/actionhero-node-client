@@ -1,5 +1,5 @@
-var A = require("./actionHeroClient.js").actionHeroClient;
-
+var A = require("./actionhero_client.js").actionhero_client;
+	
 A.connect({
 	host: "127.0.0.1",
 	port: "5000",
@@ -40,6 +40,7 @@ A.on("connected", function(){
 			params = { key: "mykey", value: "myValue" };
 			A.actionWithParams("cacheTest", params, function(apiResposne){
 				console.log("cacheTest (try 2) Error: " + apiResposne.error);
+				console.log("Working!");
 
 				//cool, lets leave
 				A.disconnect();

@@ -2,16 +2,16 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "actionhero_client",
   "description": "actionHero client in JS for other node servers to use",
-  "version": "0.0.1",
-  "homepage": "https://github.com/evantahler/actionHeroNodeClient",
+  "version": "0.0.2",
+  "homepage": "https://github.com/evantahler/actionhero_client",
   "repository": {
     "type": "git",
-    "url": "git://github.com/evantahler/actionHeroNodeClient.git"
+    "url": "git://github.com/evantahler/actionhero_client.git"
   },
   "main": "actionHeroClient",
   "keywords": ["socket", "tcp", "actionHero"],
   "engines": {
-    "node": ">=0.4.x"
+    "node": ">=0.6.x"
   },
   "dependencies": {},
   "scripts": {}

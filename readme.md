@@ -1,4 +1,4 @@
-#actionHeroClient (for nodeJS)
+#actionhero_client (for nodeJS)
 
 [![Endorse Me](http://api.coderwall.com/evantahler/endorsecount.png)](http://coderwall.com/evantahler)
 
@@ -14,51 +14,51 @@ Installation should be as simple as:
 
 and then you can include it in your projects with:
 
-	var actionHeroClient = require("actionHeroClient").actionHeroClient;
+	var actionhero_client = require("actionhero_client").actionhero_client;
 
 Once you have included the actionHeroClient library within your project, you can connect like this:
 
-	actionHeroClient.connect({
+	actionhero_client.connect({
 		host: "127.0.0.1",
 		port: "5000",
 	});
 
 ## Events
 
-actionHeroClient will emit a few types of events (many of which are caught in the example below).  Here are the events, and how you might catch them:
+actionhero_client will emit a few types of events (many of which are caught in the example below).  Here are the events, and how you might catch them:
 
-* `actionHeroClient.on("connected", function(null){})`
-* `actionHeroClient.on("end", function(null){})`
-* `actionHeroClient.on("welcome", function(welcomeMessage){})`
+* `actionhero_client.on("connected", function(null){})`
+* `actionhero_client.on("end", function(null){})`
+* `actionhero_client.on("welcome", function(welcomeMessage){})`
   * welcomeMessage is a string
-* `actionHeroClient.on("error", function(errorMessage){})`
+* `actionhero_client.on("error", function(errorMessage){})`
   * errorMessage is a string
-* `actionHeroClient.on("say", function(messageBlock){})`
+* `actionhero_client.on("say", function(messageBlock){})`
   * messageBlock is a hash containing `timeStamp`, `from`, and `message`
-* `actionHeroClient.on("keep-alive", function(null){})`
+* `actionhero_client.on("keep-alive", function(null){})`
   * this event will be fired from the server periodically when a keep-alive packet is sent.
-* `actionHeroClient.on("data", function(null){})`
+* `actionhero_client.on("data", function(null){})`
   * data is a hash {} containing all the data sent back from the server
-* `actionHeroClient.on("rawData", function(null){})`
+* `actionhero_client.on("rawData", function(null){})`
   * rawData is every line/message sent back from the server before concatenation or JSON parsing.  This might be useful for binary / file transfers
 
 ## Methods
 
 One you are connected (by waiting for the "connected" event), the following methods will be available to you:
 
-* `actionHeroClient.disconnect(next)`
-* `actionHeroClient.paramAdd(key,value,next)`
+* `actionhero_client.disconnect(next)`
+* `actionhero_client.paramAdd(key,value,next)`
   * remember that both key and value must pass JSON.stringify
-* `actionHeroClient.paramDelete(key,next)`
-* `actionHeroClient.paramsDelete(next)`
-* `actionHeroClient.paramView(key,next)`
-* `actionHeroClient.paramsView(next)`
-* `actionHeroClient.roomView(next)`
-* `actionHeroClient.roomChange(room,next)`
-* `actionHeroClient.say(msg,next)`
-* `actionHeroClient.action(action,next)`
+* `actionhero_client.paramDelete(key,next)`
+* `actionhero_client.paramsDelete(next)`
+* `actionhero_client.paramView(key,next)`
+* `actionhero_client.paramsView(next)`
+* `actionhero_client.roomView(next)`
+* `actionhero_client.roomChange(room,next)`
+* `actionhero_client.say(msg,next)`
+* `actionhero_client.action(action,next)`
   * this basic action method will not set or unset any params  
-* `actionHeroClient.actionWithParams(action,params,next)`
+* `actionhero_client.actionWithParams(action,params,next)`
   * this action will clear any previously set params to the connection
   * params is a hash of this form `{key: "myKey", value: "myValue"}` 
 
@@ -67,21 +67,21 @@ Each callback will receive the full data hash returned from the server
 
 ## Data 
 
-There are a few data elements you can inspect on `actionHeroClient`:
+There are a few data elements you can inspect on `actionhero_client`:
 
-* `actionHeroClient.lastLine`
+* `actionhero_client.lastLine`
   * This is the last parsed JSON message received from the server (chronologically, not by messageID)
-* `actionHeroClient.userMessages`
+* `actionhero_client.userMessages`
   * a hash which contains the latest `say` message from all users
-* `actionHeroClient.log`
+* `actionhero_client.log`
   * An array of the last n parsable JSON replies from the server
   * each entry is of the form {data, timeStamp} where data was the server's full response
-* `actionHeroClient.messageCount` 
+* `actionhero_client.messageCount` 
   * An integer counting the number of messages received from the server
 
 ## Example
 
-	var A = require("./actionHeroClient.js").actionHeroClient;
+	var A = require("./actionhero_client.js").actionhero_client;
 	
 	A.connect({
 		host: "127.0.0.1",
