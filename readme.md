@@ -1,6 +1,6 @@
 #actionHeroClient (for nodeJS)
 
-[![Endore Me](http://api.coderwall.com/evantahler/endorsecount.png)](http://coderwall.com/evantahler)
+[![Endorse Me](http://api.coderwall.com/evantahler/endorsecount.png)](http://coderwall.com/evantahler)
 
 This library makes it easy for one nodeJS process to talk to a remote [actionHero](http://actionherojs.com/) server.
 
@@ -10,7 +10,7 @@ This library makes use of actionHero's TCP socket connections to enable fast, st
 
 Installation should be as simple as:
 
-	npm install actionHeroClient
+	npm install actionhero_client
 
 and then you can include it in your projects with:
 

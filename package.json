@@ -1,6 +1,6 @@
 {
   "author": "Evan Tahler <evantahler@gmail.com>",
-  "name": "actionHeroClient",
+  "name": "actionhero_client",
   "description": "actionHero client in JS for other node servers to use",
   "version": "0.0.1",
   "homepage": "https://github.com/evantahler/actionHeroNodeClient",
