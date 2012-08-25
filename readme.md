@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/evantahler/actionhero_client.png)](http://travis-ci.org/evantahler/actionhero_client)
 #actionhero_client (for nodeJS)
 
 [![Endorse Me](http://api.coderwall.com/evantahler/endorsecount.png)](http://coderwall.com/evantahler)
