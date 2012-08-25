@@ -21,7 +21,7 @@ actionhero_client.expectedResponses = {};
 //////////////////////////////////////////////
 
 actionhero_client.connect = function(p, next){
-	
+	actionhero_client.params = p;
 	for(var i in defaults){
 		if(actionhero_client.params[i] == null){
 			actionhero_client.params[i] = defaults[i];
