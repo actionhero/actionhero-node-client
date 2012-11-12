@@ -2,8 +2,6 @@
 
 [![build status](https://secure.travis-ci.org/evantahler/actionhero_client.png)](http://travis-ci.org/evantahler/actionhero_client)
 
-[![Endorse Me](http://api.coderwall.com/evantahler/endorsecount.png)](http://coderwall.com/evantahler)
-
 This library makes it easy for one nodeJS process to talk to a remote [actionHero](http://actionherojs.com/) server.
 
 This library makes use of actionHero's TCP socket connections to enable fast, stateful connections.  This library also allows for many concurrent and asynchronous requests to be running in parallel by making use of actionHero's message counter.  This library is at times event-driven, and for functions that makes sense to do so, callback based.
@@ -23,7 +21,18 @@ Once you have included the actionHeroClient library within your project, you can
 	actionhero_client.connect({
 		host: "127.0.0.1",
 		port: "5000",
-	});
+	}, callback);
+
+default options (which you can ovveride) are:
+
+  var defaults = {
+    host: "127.0.0.1",
+    port: "5000",
+    delimiter: "\r\n",
+    logLength: 100,
+    secure: false,
+    timeout: 30000,
+  };
 
 ## Events
 
@@ -37,13 +46,9 @@ actionhero_client will emit a few types of events (many of which are caught in t
   * errorMessage is a string
 * `actionhero_client.on("say", function(messageBlock){})`
   * messageBlock is a hash containing `timeStamp`, `from`, and `message`
-* `actionhero_client.on("keep-alive", function(null){})`
-  * this event will be fired from the server periodically when a keep-alive packet is sent.
-* `actionhero_client.on("data", function(null){})`
-  * data is a hash {} containing all the data sent back from the server
-* `actionhero_client.on("rawData", function(null){})`
-  * rawData is every line/message sent back from the server before concatenation or JSON parsing.  This might be useful for binary / file transfers
-
+* `actionhero_client.on("timeout", function(err, request, caller){})`
+  * request is the string sent to the api
+  * caller (the calling function) is returned if your api requset didn't complete within `params.callback`
 ## Methods
 
 One you are connected (by waiting for the "connected" event), the following methods will be available to you:
@@ -56,15 +61,18 @@ One you are connected (by waiting for the "connected" event), the following meth
 * `actionhero_client.paramView(key,next)`
 * `actionhero_client.paramsView(next)`
 * `actionhero_client.roomView(next)`
+* `actionhero_client.details(next)`
 * `actionhero_client.roomChange(room,next)`
 * `actionhero_client.say(msg,next)`
 * `actionhero_client.action(action,next)`
   * this basic action method will not set or unset any params  
+  * next will be passed (err, data, duration)
 * `actionhero_client.actionWithParams(action,params,next)`
-  * this action will clear any previously set params to the connection
+  * this action will ignore any previously set params to the connection
   * params is a hash of this form `{key: "myKey", value: "myValue"}` 
+  * next will be passed (err, data, duration)
 
-Each callback will receive the full data hash returned from the server
+Each callback will receive the full data hash returned from the server and a timestamp: `(err, data, duration)`
 
 
 ## Data 
@@ -83,53 +91,60 @@ There are a few data elements you can inspect on `actionhero_client`:
 
 ## Example
 
-	var A = require("./actionhero_client.js").actionhero_client;
-	
-	A.connect({
-		host: "127.0.0.1",
-		port: "5000",
-	});
-	
-	A.on("say",function(msgBlock){
-		console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
-	});
-	
-	A.on("welcome", function(msg){
-		console.log("WELCOME: " + msg);
-	});
-	
-	A.on("error", function(err){
-		console.log("ERROR: " + err);
-	});
-	
-	A.on("keep-alive", function(){
-		console.log("KEEP-ALIVE recived");
-	});
-	
-	A.on("end", function(){
-		console.log("Connection Closed");
-	});
-	
-	A.on("connected", function(){
-		console.log("\r\nCONNECTED\r\n");
-		A.action("status", function(apiResposne){
-			console.log("STATUS:");
-			console.log(" > uptimeSeconds: " + apiResposne.stats.uptimeSeconds);
-			console.log(" > numberOfLocalSocketRequests: " + apiResposne.stats.socketServer.numberOfLocalSocketRequests);
-	
-			// Action should have an error, not all the params are provided
-			A.action("cacheTest", function(apiResposne){
-				console.log("cacheTest (try 1) Error: " + apiResposne.error);
-	
-				// Action should be OK now
-				params = { key: "mykey", value: "myValue" };
-				A.actionWithParams("cacheTest", params, function(apiResposne){
-					console.log("cacheTest (try 2) Error: " + apiResposne.error);
-	
-					//cool, lets leave
-					A.disconnect();
-					setTimeout(process.exit, 1000); // leave some time for the "end" even to fire
-				});
-			});
-		});
-	});
+  var action_hero_client = require("./actionhero_client.js");
+  var A = new action_hero_client;
+
+  A.on("say",function(msgBlock){
+    console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
+  });
+
+  A.on("welcome", function(msg){
+    console.log("WELCOME: " + msg);
+  });
+
+  A.on("error", function(err){
+    console.log("ERROR: " + err);
+  });
+
+  A.on("end", function(){
+    console.log("Connection Closed");
+  });
+
+  A.on("timeout", function(err, request, caller){
+    console.log(request + " timed out");
+  });
+
+  A.connect({
+    host: "127.0.0.1",
+    port: "5000",
+  });
+
+  A.on("connected", function(){
+    console.log("\r\nCONNECTED\r\n");
+    A.action("status", function(err, apiResposne, delta){
+      console.log("STATUS:");
+      console.log(" > uptimeSeconds: " + apiResposne.stats.uptimeSeconds);
+      console.log(" > numberOfLocalSocketRequests: " + apiResposne.stats.socketServer.numberOfLocalSocketRequests);
+      console.log(" ~ request duration: " + delta + "ms");
+
+      // Action should have an error, not all the params are provided
+      A.action("cacheTest", function(err, apiResposne, delta){
+        console.log("cacheTest (try 1) Error: " + apiResposne.error);
+        console.log(" ~ request duration: " + delta + "ms");
+
+        // Action should be OK now
+        params = { key: "mykey", value: "myValue" };
+        A.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
+          console.log("cacheTest (try 2) Error: " + apiResposne.error);
+          console.log("cacheTest (try 2) response: " + apiResposne.cacheTestResults.saveResp);
+          console.log(" ~ request duration: " + delta + "ms");
+
+          console.log("\r\nWorking!");
+
+          //cool, lets leave
+          A.disconnect();
+          setTimeout(process.exit, 1000); // leave some time for the "end" even to fire
+        });
+      });
+    });
+  });

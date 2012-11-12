@@ -3,10 +3,14 @@ var assert = require('assert');
 var suite = vows.describe('actionHero Client');
 
 var api = null;
-var A = require("./actionhero_client.js").actionhero_client;
+
+var action_hero_client = require("./actionhero_client.js");
+var A = new action_hero_client;
+
 var connectionParams = {
 	host: "0.0.0.0",
-	port: "8000",
+	port: "5678",
+  timeout: 1000,
 };
 
 // Create an actionHero server on testing ports
@@ -21,16 +25,13 @@ var startServer = function(next){
 			logging: false,
 		},
 		httpServer: {
-			enable: true,
-			port: 9000,
-		},
-		httpsServer: {
-			enable: false,
-		},
-		tcpServer: {
-			enable: true,
-			port: 8000,
-		},
+      enable: false,
+    },
+    tcpServer: {
+      enable: true,
+      secure: false,
+      port: 5678
+    },
 		webSockets: {
 			enable: false
 		},
@@ -38,9 +39,9 @@ var startServer = function(next){
 			enable: false,
 		}
 	}
-	actionHero.start(params, function(api){
+	actionHero.start(params, function(err, api){
 		console.log("Boot Sucessful!");
-		next(api);
+		next(null, api);
 	});
 }
 
@@ -49,7 +50,7 @@ suite.addBatch({
   "I should be able to start an actionHero Server": {
     topic: function(){
     	var cb = this.callback
-    	startServer(function(server_api){
+    	startServer(function(err, server_api){
     		api = server_api;
     		cb(true, api)
     	});
@@ -76,6 +77,23 @@ suite.addBatch({
 });
 
 suite.addBatch({
+  "I can get my connection details": {
+    topic: function(){
+      var cb = this.callback;
+      A.details(function(err, details, delta){
+        cb(err, details, delta)
+      })
+    },
+    'details?' : function(res, details, delta){ 
+      assert.strictEqual(details.status, "OK");
+      assert.isObject(details.details.public);
+      assert.strictEqual(delta >= 0, true);
+      assert.strictEqual(delta < 1000, true);
+    }
+  }
+});
+
+suite.addBatch({
   "Server messages should be logged": {
     topic: function(){
     	var cb = this.callback;
@@ -92,8 +110,8 @@ suite.addBatch({
   "I should be in a chat room": {
     topic: function(){
     	var cb = this.callback;
-    	A.roomView(function(msg){
-    		cb(true, msg)
+    	A.roomView(function(err, msg){
+    		cb(err, msg)
     	})
     },
     'roomStatus?' : function(res, msg){ 
@@ -106,9 +124,9 @@ suite.addBatch({
   "I can set and view params": {
     topic: function(){
     	var cb = this.callback;
-    	A.paramAdd("key", "value", function(msg){
-    		A.paramsView(function(params){
-    			cb(true, params)
+    	A.paramAdd("key", "value", function(err, msg){
+    		A.paramsView(function(err, params){
+    			cb(err, params)
     		});
     	})
     },
@@ -122,9 +140,9 @@ suite.addBatch({
   "I can delete (and confirm gone) params": {
     topic: function(){
     	var cb = this.callback;
-    	A.paramsDelete(function(msg){
-    		A.paramsView(function(params){
-    			cb(true, params)
+    	A.paramsDelete(function(err, msg){
+    		A.paramsView(function(err, params){
+    			cb(err, params)
     		});
     	})
     },
@@ -138,8 +156,8 @@ suite.addBatch({
   "I can run an action (simple)": {
     topic: function(){
     	var cb = this.callback;
-		A.action("status", function(apiResposne){
-			cb(true, apiResposne)
+		A.action("status", function(err, apiResposne){
+			cb(err, apiResposne)
 		});
        },
     'resp (simple)?' : function(res, apiResposne){ 
@@ -154,11 +172,11 @@ suite.addBatch({
   "I can run an action (complex)": {
     topic: function(){
     	var cb = this.callback;
-		params = { key: "mykey", value: "myValue" };
-		A.actionWithParams("cacheTest", params, function(apiResposne){
-			cb(true, apiResposne)
-		});
-       },
+		  params = { key: "mykey", value: "myValue" };
+		  A.actionWithParams("cacheTest", params, function(err, apiResposne){
+			 cb(err, apiResposne)
+		  });
+    },
     'resp (complex)?' : function(res, apiResposne){ 
     	assert.isObject(apiResposne);
     	assert.strictEqual(apiResposne.cacheTestResults.loadResp.value, "myValue");
@@ -182,7 +200,36 @@ suite.addBatch({
     'resp (complex)?' : function(res, msgBlock){ 
     	assert.isObject(msgBlock);
     	assert.strictEqual(msgBlock.message, "TEST MESSAGE");
-    	assert.strictEqual(msgBlock.from, "actionHero API");
+    	assert.strictEqual(msgBlock.from, 0); // default from ID
+    }
+  }
+});
+
+suite.addBatch({
+  "Timeouts will respond properly": {
+    topic: function(){
+      var cb = this.callback;
+      api.actions['slowAction'] = {
+        name: "slowAction",
+        description: "I am slow",
+        inputs: { required: [], optional: [] },
+        outputExample: { },
+        run:function(api, connection, next){
+          setTimeout(function(){
+            next(connection, true);
+          },10000)
+        }
+      }
+      A.action("slowAction", function(err, apiResposne, delta){
+       cb(err, "SHOLD NOT GET HERE");
+      });
+      A.on('timeout', function(err, request, caller){
+        cb(null, err, request, caller)
+      });
+    },
+    'resp (complex)?' : function(res, err, request, caller){ 
+      assert.strictEqual(String(err), "Error: Timeout reached");
+      assert.strictEqual(request, "slowAction");
     }
   }
 });

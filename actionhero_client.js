@@ -1,205 +1,239 @@
 var net = require('net');
+var tls = require('tls');
+var util = require('util');
 var EventEmitter = require('events').EventEmitter;
-var actionhero_client = new EventEmitter;
 
-var defaults = {
+var Defaults = {
 	host: "127.0.0.1",
 	port: "5000",
 	delimiter: "\r\n",
 	logLength: 100,
+	secure: false,
+	timeout: 3000,
 };
 
-actionhero_client.connection = null;
-actionhero_client.params = {};
-actionhero_client.lastLine = false;
-actionhero_client.stream = "";
-actionhero_client.log = [];
-actionhero_client.messageCount = 0;
-actionhero_client.userMessages = {};
-actionhero_client.expectedResponses = {};
+actionhero_client = function(){ 
+	EventEmitter.call(this);
+	this.connection = null;
+	this.params = {};
+	this.connectCallback = null;
+	this.lastLine = null;
+	this.stream = "";
+	this.log = [];
+	this.messageCount = 0;
+	this.userMessages = {};
+	this.expectedResponses = {};
+	this.startingTimeStamps = {};
+	this.responseTimesouts = {};
+	this.defaults = Defaults;
+}
+
+util.inherits(actionhero_client, EventEmitter);
 
 //////////////////////////////////////////////
 
-actionhero_client.connect = function(p, next){
-	actionhero_client.params = p;
-	for(var i in defaults){
-		if(actionhero_client.params[i] == null){
-			actionhero_client.params[i] = defaults[i];
+actionhero_client.prototype.connect = function(p, next){
+	var self = this;
+
+	self.params = p;
+	if(typeof next == 'function'){
+		self.connectCallback = next;
+	}
+
+	for(var i in self.defaults){
+		if(self.params[i] == null){
+			self.params[i] = self.defaults[i];
 		}
 	}
 
-	actionhero_client.connection = net.createConnection(actionhero_client.params.port, actionhero_client.params.host);
-	actionhero_client.connection.setEncoding("utf8");
+	if(self.params.secure == true){
+		self.connection = tls.connect(self.params.port, self.params.host);
+	}else{
+		self.connection = net.connect(self.params.port, self.params.host);
+	}
+	self.connection.setEncoding("utf8");
 
-	actionhero_client.connection.on("data", function (chunk){
-		actionhero_client.emit('rawData', String(chunk));
-		actionhero_client.stream += String(chunk);
-		if(actionhero_client.stream.charAt(actionhero_client.stream.length - 1) == "\n" && actionhero_client.stream.charAt(actionhero_client.stream.length - 2) == "\r"){
+	self.connection.on("data", function (chunk){
+		self.emit('rawData', String(chunk));
+		self.stream += String(chunk);
+		var delimited = true;
+		for(var i in self.delimiter){
+			var char = self.delimiter[i];
+			if(self.stream.charAt(self.stream.length - (i + 1)) != char){
+				delimited = false;
+				break;
+			}
+		}
+		if(delimited == true){
 			try{
-				var lines = actionhero_client.stream.split("\r\n");
+				var lines = self.stream.split(self.delimiter);
 				for(var i in lines){
 					var line = lines[i];
 					if(line.length > 0){
-						actionhero_client.lastLine = JSON.parse(line);
-						actionhero_client.emit('data', actionhero_client.lastLine);
-						actionhero_client.addLog(actionhero_client.lastLine, actionhero_client.params);
-						actionhero_client.handleData(actionhero_client.lastLine);
+						self.handleData(line);
 					}
 				}
-				actionhero_client.stream = "";
+				self.stream = "";
 			}catch(e){
-				actionhero_client.lastLine = null;
+				self.lastLine = null;
 			}
 		}
 	});
 
-	actionhero_client.connection.on("error", function(err){
-		actionhero_client.emit('error', err);
+	self.connection.on("error", function(err){
+		self.emit('error', err);
 	});
 
-	actionhero_client.connection.on("end", function (){
-		actionhero_client.emit('end', null);
+	self.connection.on("end", function (){
+		self.emit('end', null);
 	});
 
-	if(typeof next == "function"){
-		next(true, actionhero_client.connection);
-	}
 }
 
 //////////////////////////////////////////////
 
-actionhero_client.handleData = function(data){
-	if(data.messageCount > actionhero_client.messageCount){ 
-		actionhero_client.messageCount = data.messageCount; 
+actionhero_client.prototype.handleData = function(data){
+
+	this.lastLine = JSON.parse(data);
+	this.emit('data', this.lastLine);
+	this.addLog(this.lastLine);
+
+	if(this.lastLine.messageCount > this.messageCount){ 
+		this.messageCount = this.lastLine.messageCount; 
 	}
-	if(data.context == "api"){
+	if(this.lastLine.context == "api"){
 		// welcome message; indicates successfull connection
-		if(data.welcome != null){
-			actionhero_client.emit('connected');
-			actionhero_client.emit('welcome', data.welcome);
-		}
-		// Periodic keep alive message
-		else if(data.status == "keep-alive"){
-			actionhero_client.emit('keep-alive', data);
+		if(this.lastLine.welcome != null){
+			this.emit('connected');
+			this.emit('welcome', this.lastLine.welcome);
+			if(this.connectCallback != null){
+				this.connectCallback(null, this.lastLine.welcome);
+			}
 		}
 	}
 	// "say" messages from other users
-	else if(data.context == "user"){
-		actionhero_client.userMessages[data.from] = {
+	else if(this.lastLine.context == "user"){
+		this.userMessages[this.lastLine.from] = {
 			timeStamp: new Date(),
-			message: data.message,
-			from: data.from
+			message: this.lastLine.message,
+			from: this.lastLine.from
 		}
-		actionhero_client.emit('say', actionhero_client.userMessages[data.from]);
+		this.emit('say', this.userMessages[this.lastLine.from]);
 	}
 	// responses to your actions
-	else if(data.context == "response"){
-		if(actionhero_client.expectedResponses[data.messageCount] != null){
-			var next = actionhero_client.expectedResponses[data.messageCount]
-			next(data);
-			delete actionhero_client.expectedResponses[data.messageCount];
+	else if(this.lastLine.context == "response"){
+		if(this.expectedResponses[this.lastLine.messageCount] != null){
+			clearTimeout(this.responseTimesouts[this.lastLine.messageCount]);
+			var next = this.expectedResponses[this.lastLine.messageCount]
+			var delta = new Date().getTime() - this.startingTimeStamps[this.lastLine.messageCount];
+			delete this.expectedResponses[this.lastLine.messageCount];
+			delete this.startingTimeStamps[this.lastLine.messageCount];
+			delete this.responseTimesouts[this.lastLine.messageCount];
+			next(null, this.lastLine, delta);
 		}
 	}
 	// ?
 	else{ }
 }
 
-actionhero_client.send = function(str){
-	actionhero_client.connection.write(str + "\r\n");
+actionhero_client.prototype.send = function(str){
+	this.connection.write(str + "\r\n");
 }
 
-actionhero_client.registerResponseAndCall = function(msg, next){
-	if(actionhero_client.connection != null){
-		actionhero_client.messageCount++;
-		var responseID = actionhero_client.messageCount;
+actionhero_client.prototype.registerResponseAndCall = function(msg, next){
+	var self = this;
+	if(self.connection != null){
+		self.messageCount++;
+		var responseID = self.messageCount;
 		if(typeof next == "function"){
-			actionhero_client.expectedResponses[responseID] = next;
+			self.expectedResponses[responseID] = next;
+			self.startingTimeStamps[responseID] = new Date().getTime();
+			self.responseTimesouts[responseID] = setTimeout(function(msg, next){
+				self.emit('timeout', new Error("Timeout reached"), msg, next);
+			}, self.params.timeout, msg, next);
 		}
 		process.nextTick(function(){
-			actionhero_client.send(msg);
+			self.send(msg);
 		});
 	}else{
-		actionhero_client.emit('error',"Not Connected");
+		self.emit('error',new Error("Not Connected"));
 	}
 }
 
 //////////////////////////////////////////////
 
-actionhero_client.disconnect = function(next){
-	actionhero_client.registerResponseAndCall("exit",next);
+actionhero_client.prototype.disconnect = function(next){
+	this.registerResponseAndCall("exit",next);
 }
 
-actionhero_client.paramAdd = function(k,v,next){
-	if(k != null){
-		actionhero_client.registerResponseAndCall("paramAdd "+k+"="+v,next);
+actionhero_client.prototype.paramAdd = function(k,v,next){
+	if(k != null && v != null){
+		this.registerResponseAndCall("paramAdd "+k+"="+v,next);
 	}else{
-		if(typeof next == "function"){ next(false); }
+		if(typeof next == "function"){ next(new Error("key and value are required"), null); }
 	}
 }
 
-actionhero_client.paramDelete = function(k,next){
-	actionhero_client.registerResponseAndCall("paramDelete "+k,next);
+actionhero_client.prototype.paramDelete = function(k,next){
+	if(k != null){
+		this.registerResponseAndCall("paramDelete "+k,next);
+	}else{
+		if(typeof next == "function"){ next(new Error("key is required"), null); }
+	}
 }
 
-actionhero_client.paramsDelete = function(next){
-	actionhero_client.registerResponseAndCall("paramsDelete",next);
+actionhero_client.prototype.paramsDelete = function(next){
+	this.registerResponseAndCall("paramsDelete",next);
 }
 
-actionhero_client.paramView = function(k,next){
-	actionhero_client.registerResponseAndCall("paramView "+k,next);
+actionhero_client.prototype.paramView = function(k,next){
+	this.registerResponseAndCall("paramView "+k,next);
 }
 
-actionhero_client.paramsView = function(next){
-	actionhero_client.registerResponseAndCall("paramsView",next);
+actionhero_client.prototype.paramsView = function(next){
+	this.registerResponseAndCall("paramsView",next);
 }
 
-actionhero_client.roomView = function(next){
-	actionhero_client.registerResponseAndCall("roomView",next);
+actionhero_client.prototype.roomView = function(next){
+	this.registerResponseAndCall("roomView",next);
 }
 
-actionhero_client.roomChange = function(room,next){
-	actionhero_client.registerResponseAndCall("roomChange "+room,next);
+actionhero_client.prototype.details = function(next){
+	this.registerResponseAndCall("detailsView",next);
 }
 
-actionhero_client.say = function(msg,next){
-	actionhero_client.registerResponseAndCall("say "+msg,next);
+actionhero_client.prototype.roomChange = function(room,next){
+	this.registerResponseAndCall("roomChange "+room,next);
 }
 
-actionhero_client.action = function(action,next){
-	actionhero_client.registerResponseAndCall(action,next);
+actionhero_client.prototype.say = function(msg,next){
+	this.registerResponseAndCall("say "+msg,next);
 }
 
-actionhero_client.actionWithParams = function(action,params,next){
-	// I will clear all existing params
-	actionhero_client.paramsDelete(function(){
-		var started = 0;
-		for(var i in params){
-			started++;
-			actionhero_client.paramAdd(i,params[i],function(){
-				started--;
-				if(started == 0){
-					actionhero_client.action(action, next);
-				}
-			});
-		}
-		if(started == 0){
-			actionhero_client.action(action, next);
-		}
-	});
+actionhero_client.prototype.action = function(action,next){
+	this.registerResponseAndCall(action,next);
+}
+
+actionhero_client.prototype.actionWithParams = function(action,params,next){
+		var msg = {
+			action: action,
+			params: params,
+		};
+		this.registerResponseAndCall(JSON.stringify(msg), next);
 }
 
 //////////////////////////////////////////////
 
-actionhero_client.addLog = function(entry, params){
-	actionhero_client.log.push({
+actionhero_client.prototype.addLog = function(entry){
+	this.log.push({
 		timestamp: new Date(),
 		data: entry
 	})
-	if(actionhero_client.log.length > params.logLength){
-		actionhero_client.log.splice(0,1);
+	if(this.log.length > this.params.logLength){
+		this.log.splice(0,1);
 	}
 }
 
 //////////////////////////////////////////////
 
-exports.actionhero_client = actionhero_client;
+module.exports = actionhero_client;
