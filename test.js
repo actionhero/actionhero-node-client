@@ -15,7 +15,8 @@ var connectionParams = {
 
 // Create an actionHero server on testing ports
 var startServer = function(next){
-	var actionHero = require("actionHero").actionHero;
+	var actionHeroPrototype = require("actionHero").actionHeroPrototype;
+  var actionHero = new actionHeroPrototype();
 	var params = {};
 	params.configChanges = {
 		general: {
