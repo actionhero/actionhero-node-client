@@ -10,29 +10,37 @@ This library makes use of actionHero's TCP socket connections to enable fast, st
 
 Installation should be as simple as:
 
-	npm install actionhero_client
+```javascript
+npm install actionhero_client
+```
 
 and then you can include it in your projects with:
 
-	var actionhero_client = require("actionhero_client").actionhero_client;
+```javascript
+var actionhero_client = require("actionhero_client").actionhero_client;
+```
 
 Once you have included the actionHeroClient library within your project, you can connect like this:
 
-	actionhero_client.connect({
-		host: "127.0.0.1",
-		port: "5000",
-	}, callback);
+```javascript
+actionhero_client.connect({
+  host: "127.0.0.1",
+  port: "5000",
+}, callback);
+```
 
 default options (which you can ovveride) are:
 
-  var defaults = {
-    host: "127.0.0.1",
-    port: "5000",
-    delimiter: "\r\n",
-    logLength: 100,
-    secure: false,
-    timeout: 30000,
-  };
+```javascript
+var defaults = {
+  host: "127.0.0.1",
+  port: "5000",
+  delimiter: "\r\n",
+  logLength: 100,
+  secure: false,
+  timeout: 30000,
+};
+```
 
 ## Events
 
@@ -91,60 +99,60 @@ There are a few data elements you can inspect on `actionhero_client`:
 
 ## Example
 
-  var action_hero_client = require("./actionhero_client.js");
-  var A = new action_hero_client;
+```javascript
+var action_hero_client = require("./actionhero_client.js");
+var A = new action_hero_client;
 
-  A.on("say",function(msgBlock){
-    console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
-  });
+A.on("say",function(msgBlock){
+  console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
+});
 
-  A.on("welcome", function(msg){
-    console.log("WELCOME: " + msg);
-  });
+A.on("welcome", function(msg){
+  console.log("WELCOME: " + msg);
+});
 
-  A.on("error", function(err){
-    console.log("ERROR: " + err);
-  });
+A.on("error", function(err){
+  console.log("ERROR: " + err);
+});
 
-  A.on("end", function(){
-    console.log("Connection Closed");
-  });
+A.on("end", function(){
+  console.log("Connection Closed");
+});
 
-  A.on("timeout", function(err, request, caller){
-    console.log(request + " timed out");
-  });
+A.on("timeout", function(err, request, caller){
+  console.log(request + " timed out");
+});
 
-  A.connect({
-    host: "127.0.0.1",
-    port: "5000",
-  });
+A.connect({
+  host: "127.0.0.1",
+  port: "5000",
+});
 
-  A.on("connected", function(){
-    console.log("\r\nCONNECTED\r\n");
-    A.action("status", function(err, apiResposne, delta){
-      console.log("STATUS:");
-      console.log(" > uptimeSeconds: " + apiResposne.stats.uptimeSeconds);
-      console.log(" > numberOfLocalSocketRequests: " + apiResposne.stats.socketServer.numberOfLocalSocketRequests);
+A.on("connected", function(){
+  console.log("\r\nCONNECTED\r\n");
+  A.action("status", function(err, apiResposne, delta){
+    console.log("STATUS:");
+    console.log(" > uptime: " + apiResposne.uptime);
+    console.log(" ~ request duration: " + delta + "ms");
+
+    // Action should have an error, not all the params are provided
+    A.action("cacheTest", function(err, apiResposne, delta){
+      console.log("cacheTest (try 1) Error: " + apiResposne.error);
       console.log(" ~ request duration: " + delta + "ms");
 
-      // Action should have an error, not all the params are provided
-      A.action("cacheTest", function(err, apiResposne, delta){
-        console.log("cacheTest (try 1) Error: " + apiResposne.error);
+      // Action should be OK now
+      var params = { key: "mykey", value: "myValue" };
+      A.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
+        console.log("cacheTest (try 2) response: " + apiResposne.cacheTestResults.saveResp);
         console.log(" ~ request duration: " + delta + "ms");
 
-        // Action should be OK now
-        params = { key: "mykey", value: "myValue" };
-        A.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
-          console.log("cacheTest (try 2) Error: " + apiResposne.error);
-          console.log("cacheTest (try 2) response: " + apiResposne.cacheTestResults.saveResp);
-          console.log(" ~ request duration: " + delta + "ms");
+        console.log("\r\nWorking!");
 
-          console.log("\r\nWorking!");
-
-          //cool, lets leave
-          A.disconnect();
-          setTimeout(process.exit, 1000); // leave some time for the "end" even to fire
-        });
+        //cool, lets leave
+        A.disconnect();
+        setTimeout(process.exit, 1000); // leave some time for the "end" even to fire
       });
     });
   });
+});
+```

@@ -30,8 +30,7 @@ A.on("connected", function(){
 	console.log("\r\nCONNECTED\r\n");
 	A.action("status", function(err, apiResposne, delta){
 		console.log("STATUS:");
-		console.log(" > uptimeSeconds: " + apiResposne.stats.uptimeSeconds);
-		console.log(" > numberOfLocalSocketRequests: " + apiResposne.stats.socketServer.numberOfLocalSocketRequests);
+		console.log(" > uptime: " + apiResposne.uptime);
 		console.log(" ~ request duration: " + delta + "ms");
 
 		// Action should have an error, not all the params are provided
@@ -40,9 +39,8 @@ A.on("connected", function(){
 			console.log(" ~ request duration: " + delta + "ms");
 
 			// Action should be OK now
-			params = { key: "mykey", value: "myValue" };
+			var params = { key: "mykey", value: "myValue" };
 			A.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
-				console.log("cacheTest (try 2) Error: " + apiResposne.error);
 				console.log("cacheTest (try 2) response: " + apiResposne.cacheTestResults.saveResp);
 				console.log(" ~ request duration: " + delta + "ms");
 
