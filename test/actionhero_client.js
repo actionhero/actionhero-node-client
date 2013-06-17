@@ -105,15 +105,18 @@ describe('integration', function(){
   it("will obey timeouts", function(done){
     this.timeout(5 * 1000)
 
+    setup.api.actions.versions['slowAction'] = [ 1 ];
     setup.api.actions.actions['slowAction'] = {
-      name: "slowAction",
-      description: "I am slow",
-      inputs: { required: [], optional: [] },
-      outputExample: { },
-      run:function(api, connection, next){
-        setTimeout(function(){
-          next(connection, true);
-        },10000)
+      "1":{ 
+        name: "slowAction",
+        description: "I am slow",
+        inputs: { required: [], optional: [] },
+        outputExample: { },
+        run:function(api, connection, next){
+          setTimeout(function(){
+            next(connection, true);
+          },10000)
+        }
       }
     }
 
