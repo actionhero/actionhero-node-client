@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/evantahler/actionhero_client.git"
   },
-  "main": "actionHeroClient",
+  "main": "actionhero_client.js",
   "keywords": ["socket", "tcp", "actionHero"],
   "engines": {
     "node": ">=0.8.x"
