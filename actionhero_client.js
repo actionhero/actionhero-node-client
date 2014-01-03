@@ -124,7 +124,7 @@ actionhero_client.prototype.handleData = function(data){
   else if(this.lastLine.context == "response"){
     if(this.expectedResponses[this.lastLine.messageCount] != null){
       clearTimeout(this.responseTimesouts[this.lastLine.messageCount]);
-      var next = this.expectedResponses[this.lastLine.messageCount]
+      var next = this.expectedResponses[this.lastLine.messageCount];
       var delta = new Date().getTime() - this.startingTimeStamps[this.lastLine.messageCount];
       delete this.expectedResponses[this.lastLine.messageCount];
       delete this.startingTimeStamps[this.lastLine.messageCount];
@@ -206,6 +206,18 @@ actionhero_client.prototype.details = function(next){
 
 actionhero_client.prototype.roomChange = function(room,next){
   this.registerResponseAndCall("roomChange "+room,next);
+}
+
+actionhero_client.prototype.roomLeave = function(room,next){
+  this.registerResponseAndCall("roomLeave "+room,next);
+}
+
+actionhero_client.prototype.listenToRoom = function(room,next){
+  this.registerResponseAndCall("listenToRoom "+room,next);
+}
+
+actionhero_client.prototype.silenceRoom = function(room,next){
+  this.registerResponseAndCall("silenceRoom "+room,next);
 }
 
 actionhero_client.prototype.say = function(msg,next){

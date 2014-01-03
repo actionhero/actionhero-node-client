@@ -11,19 +11,17 @@ var A = new action_hero_client;
 describe('integration', function(){  
   
   before(function(done){
-    setup.init(done);
+    setup.init(function(){
+      A.on("connected", function(){
+        done();
+      });
+      A.connect(connectionParams);
+    });
   });
 
   it("actionHero server should have booted", function(done){
     setup.api.should.be.an.instanceOf(Object);
     done();
-  });
-
-  it("the client should be able to connect", function(done){
-    A.on("connected", function(){
-      done();
-    });
-    A.connect(connectionParams);
   });
 
   it("can get my connection details", function(done){
@@ -32,7 +30,6 @@ describe('integration', function(){
       details.context.should.equal("response");
       details.data.totalActions.should.equal(0);
       details.data.pendingActions.should.equal(0);
-      details.data.room.should.equal("defaultRoom");
       done();
     });
   });
@@ -90,16 +87,27 @@ describe('integration', function(){
     });
   });
 
+  it("can join a room", function(done){
+    A.roomChange('defaultRoom', function(err, data){
+      A.details(function(err, data){
+        data.data.room.should.equal('defaultRoom');
+        done();
+      });
+    });
+  })
+
   it("will get SAY events", function(done){
     var used = false;
-    A.on("say",function(msgBlock){
-      if(used == false){
-        used = true;
-        msgBlock.message.should.equal("TEST MESSAGE");
-        done();
-      }
+    A.roomChange('defaultRoom', function(){
+      A.on("say",function(msgBlock){
+        if(used == false){
+          used = true;
+          msgBlock.message.should.equal("TEST MESSAGE");
+          done();
+        }
+      });
+      setup.api.chatRoom.socketRoomBroadcast({room: 'defaultRoom'}, "TEST MESSAGE");
     });
-    setup.api.chatRoom.socketRoomBroadcast(null, "TEST MESSAGE");
   });
 
   it("will obey timeouts", function(done){

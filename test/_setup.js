@@ -17,7 +17,7 @@ exports._setup = {
   bootServer: function(callback){
     var self = this;
     if(self.server == null){
-      process.env.ACTIONHERO_CONFIG = process.cwd() + "/node_modules/actionHero/config.js";
+      process.env.ACTIONHERO_CONFIG = process.cwd() + "/node_modules/actionHero/config/config.js";
       self.server = new self.serverPrototype();
       self.server.start({configChanges: self.serverConfigChanges}, function(err, api){
         self.api = api;
