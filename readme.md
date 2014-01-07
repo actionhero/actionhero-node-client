@@ -1,6 +1,6 @@
 #actionhero_client (for nodeJS)
 
-[![build status](https://secure.travis-ci.org/evantahler/actionhero_client.png)](http://travis-ci.org/evantahler/actionhero_client)  [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/evantahler/actionhero_client/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![build status](https://secure.travis-ci.org/evantahler/actionhero_client.png)](http://travis-ci.org/evantahler/actionhero_client) 
 
 This library makes it easy for one nodeJS process to talk to a remote [actionHero](http://actionherojs.com/) server.
 
