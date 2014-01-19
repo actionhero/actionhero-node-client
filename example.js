@@ -1,5 +1,5 @@
-var action_hero_client = require("./actionhero_client.js");
-var A = new action_hero_client;
+var ahClientPrototype = require(__dirname + "/lib/actionhero_client.js");
+var A = new ahClientPrototype;
 
 A.on("say",function(msgBlock){
 	console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);

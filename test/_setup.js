@@ -1,5 +1,5 @@
 exports._setup = {
-  serverPrototype: require("../node_modules/actionHero/actionHero.js").actionHeroPrototype,
+  serverPrototype: require("../node_modules/actionhero/actionhero.js").actionheroPrototype,
   serverConfigChanges: {
     general: {
       id: "test-server-1",

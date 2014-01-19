@@ -5,7 +5,7 @@ var connectionParams = {
   port: "9000",
   timeout: 1000,
 };
-var action_hero_client = require(process.cwd() + "/actionhero_client.js");
+var action_hero_client = require(process.cwd() + "/lib/actionhero_client.js");
 var A = new action_hero_client;
 
 describe('integration', function(){  
@@ -36,7 +36,7 @@ describe('integration', function(){
 
   it("should log server messages internally", function(done){
     A.log.length.should.equal(2);
-    A.log[0].data.welcome.should.equal("Hello! Welcome to the actionHero api");
+    A.log[0].data.welcome.should.equal("Hello! Welcome to the actionhero api");
     done()
   });
 
