@@ -2,9 +2,9 @@
 
 [![build status](https://secure.travis-ci.org/evantahler/actionhero_client.png)](http://travis-ci.org/evantahler/actionhero_client) 
 
-This library makes it easy for one nodeJS process to talk to a remote [actionHero](http://actionherojs.com/) server.
+This library makes it easy for one nodeJS process to talk to a remote [actionhero](http://actionherojs.com/) server.
 
-This library makes use of actionHero's TCP socket connections to enable fast, stateful connections.  This library also allows for many concurrent and asynchronous requests to be running in parallel by making use of actionHero's message counter.  This library is at times event-driven, and for functions that makes sense to do so, callback based.
+This library makes use of actionhero's TCP socket connections to enable fast, stateful connections.  This library also allows for many concurrent and asynchronous requests to be running in parallel by making use of actionhero's message counter.  This library is at times event-driven, and for functions that makes sense to do so, callback based.
 
 ## Setup
 
@@ -20,7 +20,7 @@ and then you can include it in your projects with:
 var actionhero_client = require("actionhero_client").actionhero_client;
 ```
 
-Once you have included the actionHeroClient library within your project, you can connect like this:
+Once you have included the actionheroClient library within your project, you can connect like this:
 
 ```javascript
 actionhero_client.connect({

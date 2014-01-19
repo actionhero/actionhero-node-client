@@ -19,7 +19,7 @@ describe('integration', function(){
     });
   });
 
-  it("actionHero server should have booted", function(done){
+  it("actionhero server should have booted", function(done){
     setup.api.should.be.an.instanceOf(Object);
     done();
   });
