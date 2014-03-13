@@ -29,7 +29,7 @@ actionhero_client.connect({
 }, callback);
 ```
 
-default options (which you can ovveride) are:
+default options (which you can override) are:
 
 ```javascript
 var defaults = {
