@@ -120,7 +120,7 @@ describe('integration', function(){
       data.data.rooms.length.should.equal(0);
       client.roomAdd('defaultRoom', function(err, data){
         client.roomView('defaultRoom', function(err, data){
-          Object.keys( data.data.members )[0].should.equal( client.id );
+          Object.keys( data.data.members ).should.containEql( client.id );
           
           client.roomLeave('defaultRoom', function(err, data){
             client.detailsView(function(err, data){
