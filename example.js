@@ -1,4 +1,4 @@
-var actionheroClient = require(__dirname + "/lib/actionheroClient.js");
+var actionheroClient = require(__dirname + "/lib/actionhero-client.js");
 var client = new actionheroClient();
 
 client.on("say", function(msgBlock){

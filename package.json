@@ -1,14 +1,14 @@
 {
   "author": "Evan Tahler <evantahler@gmail.com>",
-  "name": "actionheroClient",
+  "name": "actionhero-client",
   "description": "actionhero client in JS for other node servers to use",
   "version": "4.0.0",
-  "homepage": "https://github.com/evantahler/actionheroClient",
+  "homepage": "https://github.com/evantahler/actionhero-client",
   "repository": {
     "type": "git",
-    "url": "git://github.com/evantahler/actionheroClient.git"
+    "url": "git://github.com/evantahler/actionhero-client.git"
   },
-  "main": "lib/actionheroClient.js",
+  "main": "lib/actionhero-client.js",
   "keywords": [
     "socket",
     "tcp",

@@ -1,6 +1,6 @@
 #actionheroClient (for nodeJS)
 
-[![build status](https://secure.travis-ci.org/evantahler/actionheroClient.png)](http://travis-ci.org/evantahler/actionheroClient) 
+[![build status](https://secure.travis-ci.org/evantahler/actionher-client.png)](http://travis-ci.org/evantahler/actionhero-client) 
 
 This library makes it easy for one nodeJS process to talk to a remote [actionhero](http://actionherojs.com/) server.
 
@@ -11,13 +11,13 @@ This library makes use of actionhero's TCP socket connections to enable fast, st
 Installation should be as simple as:
 
 ```javascript
-npm install --save actionheroClient
+npm install --save actionhero-client
 ```
 
 and then you can include it in your projects with:
 
 ```javascript
-var actionheroClient = require("actionheroClient");
+var actionheroClient = require("actionhero-client");
 var client = new actionheroClient();
 ```
 
@@ -103,7 +103,7 @@ There are a few data elements you can inspect on `actionheroClient`:
 ## Example
 
 ```javascript
-var actionheroClient = require("actionheroClient");
+var actionheroClient = require("actionhero-client");
 var client = new actionheroClient();
 
 client.on("say", function(msgBlock){

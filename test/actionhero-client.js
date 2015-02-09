@@ -1,6 +1,6 @@
 var should = require("should");
 var setup = require(__dirname + "/setup.js").setup;
-var actionheroClient = require(__dirname + "/../lib/actionheroClient.js");
+var actionheroClient = require(__dirname + "/../lib/actionhero-client.js");
 var client;
 
 var connectionParams = {
