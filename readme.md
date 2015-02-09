@@ -84,7 +84,7 @@ One you are connected (by waiting for the "connected" event or using the `connec
   * params is a hash of this form `{key: "myKey", value: "myValue"}` 
   * next will be passed (err, data, duration)
 
-Each callback will receive the full data hash returned from the server and a timestamp: `(err, data, duration)`
+Each callback will receive the full data hash returned from the server and a timestamp: `(err, data, duration)` 
 
 ## Data 
 
