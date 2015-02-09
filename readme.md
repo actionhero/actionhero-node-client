@@ -1,6 +1,6 @@
 #actionheroClient (for nodeJS)
 
-[![build status](https://secure.travis-ci.org/evantahler/actionher-client.png)](http://travis-ci.org/evantahler/actionhero-client) 
+[![Build Status](https://travis-ci.org/evantahler/actionhero-client.svg?branch=master)](https://travis-ci.org/evantahler/actionhero-client)
 
 This library makes it easy for one nodeJS process to talk to a remote [actionhero](http://actionherojs.com/) server.
 
