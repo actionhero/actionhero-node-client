@@ -1,23 +1,28 @@
 {
   "author": "Evan Tahler <evantahler@gmail.com>",
-  "name": "actionhero_client",
+  "name": "actionheroClient",
   "description": "actionhero client in JS for other node servers to use",
-  "version": "3.0.1",
-  "homepage": "https://github.com/evantahler/actionhero_client",
+  "version": "4.0.0",
+  "homepage": "https://github.com/evantahler/actionheroClient",
   "repository": {
     "type": "git",
-    "url": "git://github.com/evantahler/actionhero_client.git"
+    "url": "git://github.com/evantahler/actionheroClient.git"
   },
-  "main": "lib/actionhero_client.js",
-  "keywords": ["socket", "tcp", "actionhero", "client", "request"],
+  "main": "lib/actionheroClient.js",
+  "keywords": [
+    "socket",
+    "tcp",
+    "actionhero",
+    "client",
+    "request"
+  ],
   "engines": {
     "node": ">=0.8.x"
   },
-  "dependencies": {},
   "devDependencies": {
-    "actionhero":"git://github.com/evantahler/actionhero.git#master",
-    "mocha":"x.x.x",
-    "should":"x.x.x"
+    "actionhero": "git://github.com/evantahler/actionhero.git#master",
+    "mocha": "^2.1.0",
+    "should": "^4.6.5"
   },
   "scripts": {
     "test": "mocha"

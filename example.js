@@ -1,55 +1,52 @@
-var ahClientPrototype = require(__dirname + "/lib/actionhero_client.js");
-var A = new ahClientPrototype;
+var actionheroClient = require(__dirname + "/lib/actionheroClient.js");
+var client = new actionheroClient();
 
-A.on("say",function(msgBlock){
-	console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
+client.on("say", function(msgBlock){
+  console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
 });
 
-A.on("welcome", function(msg){
-	console.log("WELCOME: " + msg);
+client.on("welcome", function(msg){
+  console.log("WELCOME: " + msg);
 });
 
-A.on("error", function(err){
-	console.log("ERROR: " + err);
+client.on("error", function(err, data){
+  console.log("ERROR: " + err);
+  if(data){ console.log(data); }
 });
 
-A.on("end", function(){
-	console.log("Connection Closed");
+client.on("end", function(){
+  console.log("Connection Ended");
 });
 
-A.on("timeout", function(err, request, caller){
-	console.log(request + " timed out");
+client.on("timeout", function(err, request, caller){
+  console.log(request + " timed out");
 });
 
-A.connect({
-	host: "127.0.0.1",
-	port: "5000",
-});
+client.connect({
+  host: "127.0.0.1",
+  port: "5000",
+}, function(){
+  // get details about myself
+  console.log(client.details);
+  
+  // try an action
+  var params = { key: "mykey", value: "myValue" };
+  client.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
+    console.log("cacheTest action response: " + apiResposne.cacheTestResults.saveResp);
+    console.log(" ~ request duration: " + delta + "ms");
+  });
 
-A.on("connected", function(){
-	console.log("\r\nCONNECTED\r\n");
-	A.action("status", function(err, apiResposne, delta){
-		console.log("STATUS:");
-		console.log(" > uptime: " + apiResposne.uptime);
-		console.log(" ~ request duration: " + delta + "ms");
+  // join a chat room and talk
+  client.roomAdd("defaultRoom", function(err){
+    client.say("defaultRoom", "Hello from the actionheroClient");
+    client.roomLeave("defaultRoom");
+  });
 
-		// Action should have an error, not all the params are provided
-		A.action("cacheTest", function(err, apiResposne, delta){
-			console.log("cacheTest (try 1) Error: " + apiResposne.error);
-			console.log(" ~ request duration: " + delta + "ms");
+  // leave
+  setTimeout(function(){
+    client.disconnect(function(){
+      console.log("all done!");
+    });
+  }, 1000);
 
-			// Action should be OK now
-			var params = { key: "mykey", value: "myValue" };
-			A.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
-				console.log("cacheTest (try 2) response: " + apiResposne.cacheTestResults.saveResp);
-				console.log(" ~ request duration: " + delta + "ms");
-
-				console.log("\r\nWorking!");
-
-				//cool, lets leave
-				A.disconnect();
-				setTimeout(process.exit, 1000); // leave some time for the "end" even to fire
-			});
-		});
-	});
 });

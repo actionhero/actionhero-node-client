@@ -1,4 +1,4 @@
-exports._setup = {
+exports.setup = {
   serverPrototype: require("../node_modules/actionhero/actionhero.js").actionheroPrototype,
   serverConfigChanges: {
     general: {
@@ -8,31 +8,36 @@ exports._setup = {
     },
     logger: { transports: null, },
     servers: {
+      web: { enabled: false },
+      websocket: { enabled: false },
       socket: {
+        enabled: true,
         secure: false, 
         port: 9000,    
       },
     }
   },
-  bootServer: function(callback){
+
+  startServer: function(callback){
     var self = this;
-    if(self.server == null){
-      process.env.ACTIONHERO_CONFIG = process.cwd() + "/node_modules/actionhero/config/config.js";
+
+    if(!self.server){
+      process.env.ACTIONHERO_CONFIG = process.cwd() + "/node_modules/actionhero/config/";
       self.server = new self.serverPrototype();
       self.server.start({configChanges: self.serverConfigChanges}, function(err, api){
         self.api = api;
-        callback();
+        callback(err, self.api);
       });
     }else{
-      self.server.restart(function(){
+      process.nextTick(function(){
         callback();
       });
     }
   },
-  init: function(callback){
-    var self = this;
-    self.bootServer(function(){
+
+  stopServer: function(callback){
+    self.server.stop(function(){
       callback();
     });
-  }
-}
+  },
+};

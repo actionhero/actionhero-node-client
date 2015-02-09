@@ -1,21 +1,23 @@
-var should = require("should")
-var setup = require("./_setup.js")._setup;
+var should = require("should");
+var setup = require(__dirname + "/setup.js").setup;
+var actionheroClient = require(__dirname + "/../lib/actionheroClient.js");
+var client;
+
 var connectionParams = {
   host: "0.0.0.0",
-  port: "9000",
+  port: setup.serverConfigChanges.servers.socket.port,
   timeout: 1000,
 };
-var action_hero_client = require(process.cwd() + "/lib/actionhero_client.js");
-var A = new action_hero_client;
+
 
 describe('integration', function(){  
   
-  before(function(done){
-    setup.init(function(){
-      A.on("connected", function(){
+  beforeEach(function(done){
+    client = new actionheroClient();
+    setup.startServer(function(){
+      client.connect(connectionParams, function(){
         done();
       });
-      A.connect(connectionParams);
     });
   });
 
@@ -25,7 +27,8 @@ describe('integration', function(){
   });
 
   it("can get my connection details", function(done){
-    A.details(function(err, details, delta){
+    client.detailsView(function(err, details, delta){
+      should.not.exist(err);
       details.status.should.equal("OK");
       details.context.should.equal("response");
       details.data.totalActions.should.equal(0);
@@ -35,52 +38,67 @@ describe('integration', function(){
   });
 
   it("should log server messages internally", function(done){
-    A.log.length.should.equal(2);
-    A.log[0].data.welcome.should.equal("Hello! Welcome to the actionhero api");
-    done()
+    client.log.length.should.equal(2);
+    client.log[0].data.welcome.should.equal("Hello! Welcome to the actionhero api");
+    done();
   });
 
   it("should be able to set params", function(done){
-    A.paramAdd("key", "value", function(err, response){
+    client.paramAdd("key", "value", function(err, response){
+      should.not.exist(err);
       response.status.should.equal("OK");
-      A.paramsView(function(err, params){
+      client.paramsView(function(err, params){
         params.data.key.should.equal("value");
-        done()
+        done();
       });
-    })
+    });
   });
 
   it("can delete params and confirm they are gone", function(done){
-    A.paramsDelete(function(err, response){
-      response.status.should.equal("OK");
-      A.paramsView(function(err, params){
-        should.not.exist(params.data.key);
-        done();
+    client.paramAdd("key", "value", function(err, response){
+      should.not.exist(err);
+      client.paramsDelete(function(err, response){
+        should.not.exist(err);
+        response.status.should.equal("OK");
+        client.paramsView(function(err, params){
+          should.not.exist(err);
+          should.not.exist(params.data.key);
+          done();
+        });
       });
-    })
+    });
   });
 
-  it("can delete params and confirm they are gone", function(done){
-    A.paramsDelete(function(err, response){
-      response.status.should.equal("OK");
-      A.paramsView(function(err, params){
-        should.not.exist(params.data.key);
-        done();
+  it("can delete a param and confirm they are gone", function(done){
+    client.paramAdd("key", "v1", function(err, response){
+      should.not.exist(err);
+      client.paramAdd("value", "v2", function(err, response){
+        should.not.exist(err);
+        client.paramDelete("key", function(err, response){
+          should.not.exist(err);
+          client.paramsView(function(err, params){
+            Object.keys( params.data ).length.should.equal(1);
+            params.data.value.should.equal("v2");
+            done();
+          });
+        });
       });
-    })
+    });
   });
 
-  it("can run an action (simple)", function(done){
-    A.action("status", function(err, apiResposne){
+  it("can run an action (simple params)", function(done){
+    client.action("status", function(err, apiResposne){
+      should.not.exist(err);
       apiResposne.uptime.should.be.above(0);
       apiResposne.context.should.equal("response");
       done();
     });
   });
 
-  it("can run an action (complex)", function(done){
+  it("can run an action (complex params)", function(done){
     var params = { key: "mykey", value: "myValue" };
-    A.actionWithParams("cacheTest", params, function(err, apiResposne){
+    client.actionWithParams("cacheTest", params, function(err, apiResposne){
+      should.not.exist(err);
       apiResposne.context.should.equal("response");
       apiResposne.cacheTestResults.saveResp.should.equal(true);
       done();
@@ -88,56 +106,80 @@ describe('integration', function(){
   });
 
   it("can join a room", function(done){
-    A.roomChange('defaultRoom', function(err, data){
-      A.details(function(err, data){
-        data.data.room.should.equal('defaultRoom');
+    client.roomAdd('defaultRoom', function(err, data){
+      client.roomView('defaultRoom', function(err, data){
+        Object.keys( data.data.members ).length.should.equal(1);
+        Object.keys( data.data.members )[0].should.equal( client.id );
         done();
       });
     });
-  })
+  });
+
+  it("can leave a room", function(done){
+    client.detailsView(function(err, data){
+      data.data.rooms.length.should.equal(0);
+      client.roomAdd('defaultRoom', function(err, data){
+        client.roomView('defaultRoom', function(err, data){
+          Object.keys( data.data.members )[0].should.equal( client.id );
+          
+          client.roomLeave('defaultRoom', function(err, data){
+            client.detailsView(function(err, data){
+              data.data.rooms.length.should.equal(0);
+              done();
+            });
+          });
+
+        });
+      });
+    });
+  });
+
+  it('will translate bad status to an error callback', function(done){
+    client.roomView('someCrazyRoom', function(err, data){
+      String(err).should.equal('Error: not member of room someCrazyRoom');
+      data.status.should.equal('not member of room someCrazyRoom');
+      done();
+    });
+  });
 
   it("will get SAY events", function(done){
     var used = false;
-    A.roomChange('defaultRoom', function(){
-      A.on("say",function(msgBlock){
-        if(used == false){
+    client.roomAdd('defaultRoom', function(){
+      client.on("say",function(msgBlock){
+        if(used === false){
           used = true;
           msgBlock.message.should.equal("TEST MESSAGE");
           done();
         }
       });
-      setup.api.chatRoom.socketRoomBroadcast({room: 'defaultRoom'}, "TEST MESSAGE");
+
+      setup.api.chatRoom.broadcast({}, 'defaultRoom', "TEST MESSAGE");
+    });
+  });
+
+  it('will obey the servers simultaneousActions policy', function(done){
+    client.actionWithParams("sleepTest", {sleepDuration: 500});
+    client.actionWithParams("sleepTest", {sleepDuration: 500});
+    client.actionWithParams("sleepTest", {sleepDuration: 500});
+    client.actionWithParams("sleepTest", {sleepDuration: 500});
+    client.actionWithParams("sleepTest", {sleepDuration: 500});
+    client.actionWithParams("sleepTest", {sleepDuration: 500}, function(err, apiResposne){
+      String(err).should.equal('Error: Error: you have too many pending requests');
+      apiResposne.error.should.equal('Error: you have too many pending requests');
+      done();
     });
   });
 
   it("will obey timeouts", function(done){
-    this.timeout(5 * 1000)
-
-    setup.api.actions.versions['slowAction'] = [ 1 ];
-    setup.api.actions.actions['slowAction'] = {
-      "1":{ 
-        name: "slowAction",
-        description: "I am slow",
-        inputs: { required: [], optional: [] },
-        outputExample: { },
-        run:function(api, connection, next){
-          setTimeout(function(){
-            next(connection, true);
-          },10000)
-        }
-      }
-    }
-
-    A.on('timeout', function(err, request, caller){
-      String(err).should.equal("Error: Timeout reached");
-      request.should.equal("slowAction");
-      done()
-    });
-
-    A.action("slowAction", function(err, apiResposne){
-      console.log(apiResposne)
-      throw new Error("I should not get here")
+    client.actionWithParams("sleepTest", {sleepDuration: 2 * 1000}, function(err, apiResposne){
+      String( err ).should.equal('Error: Timeout reached');
+      should.not.exist(apiResposne);
+      done();
     });
   });
 
+});
+
+describe('connection and reconnection', function(){
+  // TODO
 });
