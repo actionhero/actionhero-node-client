@@ -7,6 +7,17 @@ exports.setup = {
       developmentMode: false
     },
     logger: { transports: null, },
+    // logger: {
+    //   transports: [ 
+    //     function(api, winston){
+    //       return new (winston.transports.Console)({
+    //         colorize: true,
+    //         level: 'info',
+    //         timestamp: api.utils.sqlDateTime
+    //       });
+    //     }
+    //   ]
+    // },
     servers: {
       web: { enabled: false },
       websocket: { enabled: false },

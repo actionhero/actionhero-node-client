@@ -164,8 +164,8 @@ describe('integration', function(){
     client.actionWithParams("sleepTest", {sleepDuration: 500});
     client.actionWithParams("sleepTest", {sleepDuration: 500});
     client.actionWithParams("sleepTest", {sleepDuration: 500}, function(err, apiResposne){
-      String(err).should.equal('Error: Error: you have too many pending requests');
-      apiResposne.error.should.equal('Error: you have too many pending requests');
+      String(err).should.equal('Error: you have too many pending requests');
+      apiResposne.error.should.equal('you have too many pending requests');
       done();
     });
   });
