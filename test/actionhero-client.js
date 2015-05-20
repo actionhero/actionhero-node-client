@@ -87,20 +87,20 @@ describe('integration', function(){
   });
 
   it("can run an action (simple params)", function(done){
-    client.action("status", function(err, apiResposne){
+    client.action("status", function(err, apiResponse){
       should.not.exist(err);
-      apiResposne.uptime.should.be.above(0);
-      apiResposne.context.should.equal("response");
+      apiResponse.uptime.should.be.above(0);
+      apiResponse.context.should.equal("response");
       done();
     });
   });
 
   it("can run an action (complex params)", function(done){
     var params = { key: "mykey", value: "myValue" };
-    client.actionWithParams("cacheTest", params, function(err, apiResposne){
+    client.actionWithParams("cacheTest", params, function(err, apiResponse){
       should.not.exist(err);
-      apiResposne.context.should.equal("response");
-      apiResposne.cacheTestResults.saveResp.should.equal(true);
+      apiResponse.context.should.equal("response");
+      apiResponse.cacheTestResults.saveResp.should.equal(true);
       done();
     });
   });
@@ -163,17 +163,17 @@ describe('integration', function(){
     client.actionWithParams("sleepTest", {sleepDuration: 500});
     client.actionWithParams("sleepTest", {sleepDuration: 500});
     client.actionWithParams("sleepTest", {sleepDuration: 500});
-    client.actionWithParams("sleepTest", {sleepDuration: 500}, function(err, apiResposne){
+    client.actionWithParams("sleepTest", {sleepDuration: 500}, function(err, apiResponse){
       String(err).should.equal('Error: you have too many pending requests');
-      apiResposne.error.should.equal('you have too many pending requests');
+      apiResponse.error.should.equal('you have too many pending requests');
       done();
     });
   });
 
   it("will obey timeouts", function(done){
-    client.actionWithParams("sleepTest", {sleepDuration: 2 * 1000}, function(err, apiResposne){
+    client.actionWithParams("sleepTest", {sleepDuration: 2 * 1000}, function(err, apiResponse){
       String( err ).should.equal('Error: Timeout reached');
-      should.not.exist(apiResposne);
+      should.not.exist(apiResponse);
       done();
     });
   });
