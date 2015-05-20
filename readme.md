@@ -138,8 +138,8 @@ client.connect({
   
   // try an action
   var params = { key: "mykey", value: "myValue" };
-  client.actionWithParams("cacheTest", params, function(err, apiResposne, delta){
-    console.log("cacheTest action response: " + apiResposne.cacheTestResults.saveResp);
+  client.actionWithParams("cacheTest", params, function(err, apiResponse, delta){
+    console.log("cacheTest action response: " + apiResponse.cacheTestResults.saveResp);
     console.log(" ~ request duration: " + delta + "ms");
   });
 
