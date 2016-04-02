@@ -4,11 +4,15 @@ exports.setup = {
     general: {
       id: "test-server-1",
       workers: 1,
-      developmentMode: false
+      developmentMode: false,
+      startingChatRooms: {
+        'defaultRoom': {},
+        'otherRoom': {},
+      },
     },
     logger: { transports: null, },
     // logger: {
-    //   transports: [ 
+    //   transports: [
     //     function(api, winston){
     //       return new (winston.transports.Console)({
     //         colorize: true,
@@ -23,8 +27,8 @@ exports.setup = {
       websocket: { enabled: false },
       socket: {
         enabled: true,
-        secure: false, 
-        port: 9000,    
+        secure: false,
+        port: 9000,
       },
     }
   },
