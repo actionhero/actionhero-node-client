@@ -23,7 +23,7 @@
   "devDependencies": {
     "actionhero": "git://github.com/evantahler/actionhero.git#master",
     "mocha": "^2.1.0",
-    "should": "^8.3.0"
+    "should": "^10.0.0"
   },
   "scripts": {
     "test": "mocha"
