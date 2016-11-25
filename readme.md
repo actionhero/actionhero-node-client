@@ -1,4 +1,4 @@
-#actionheroClient (for nodeJS)
+#ActionheroClient (for nodeJS)
 
 ![NPM Version](https://img.shields.io/npm/v/actionhero-client.svg?style=flat) ![Node Version](https://img.shields.io/node/v/actionhero-client.svg?style=flat) [![Build Status](https://travis-ci.org/evantahler/actionhero-client.svg?branch=master)](https://travis-ci.org/evantahler/actionhero-client)
 
@@ -19,11 +19,11 @@ npm install --save actionhero-client
 and then you can include it in your projects with:
 
 ```javascript
-var actionheroClient = require("actionhero-client");
-var client = new actionheroClient();
+var ActionheroClient = require("actionhero-client");
+var client = new ActionheroClient();
 ```
 
-Once you have included the actionheroClient library within your project, you can connect like this:
+Once you have included the ActionheroClient library within your project, you can connect like this:
 
 ```javascript
 client.connect({
@@ -49,7 +49,7 @@ var defaults = {
 
 ## Events
 
-actionheroClient will emit a few types of events (many of which are caught in the example below).  Here are the events, and how you might catch them:
+ActionheroClient will emit a few types of events (many of which are caught in the example below).  Here are the events, and how you might catch them:
 
 * `client.on("connected", function(null){})`
 * `client.on("end", function(null){})`
@@ -66,47 +66,47 @@ actionheroClient will emit a few types of events (many of which are caught in th
 
 One you are connected (by waiting for the "connected" event or using the `connect` callback), the following methods will be available to you:
 
-* `actionheroClient.disconnect(next)`
-* `actionheroClient.paramAdd(key,value,next)`
+* `ActionheroClient.disconnect(next)`
+* `ActionheroClient.paramAdd(key,value,next)`
   * remember that both key and value must pass JSON.stringify
-* `actionheroClient.paramDelete(key,next)`
-* `actionheroClient.paramsDelete(next)`
-* `actionheroClient.paramView(key,next)`
-* `actionheroClient.paramsView(next)`
-* `actionheroClient.details(next)`
-* `actionheroClient.roomView(room, next)`
-* `actionheroClient.roomAdd(room,next)`
-* `actionheroClient.roomLeave(room,next)`
-* `actionheroClient.say(room, msg, next)`
-* `actionheroClient.action(action, next)`
+* `ActionheroClient.paramDelete(key,next)`
+* `ActionheroClient.paramsDelete(next)`
+* `ActionheroClient.paramView(key,next)`
+* `ActionheroClient.paramsView(next)`
+* `ActionheroClient.details(next)`
+* `ActionheroClient.roomView(room, next)`
+* `ActionheroClient.roomAdd(room,next)`
+* `ActionheroClient.roomLeave(room,next)`
+* `ActionheroClient.say(room, msg, next)`
+* `ActionheroClient.action(action, next)`
   * this basic action method will not set or unset any params  
   * next will be passed (err, data, duration)
-* `actionheroClient.actionWithParams(action, params, next)`
+* `ActionheroClient.actionWithParams(action, params, next)`
   * this action will ignore any previously set params to the connection
-  * params is a hash of this form `{key: "myKey", value: "myValue"}` 
+  * params is a hash of this form `{key: "myKey", value: "myValue"}`
   * next will be passed (err, data, duration)
 
-Each callback will receive the full data hash returned from the server and a timestamp: `(err, data, duration)` 
+Each callback will receive the full data hash returned from the server and a timestamp: `(err, data, duration)`
 
-## Data 
+## Data
 
 There are a few data elements you can inspect on `actionheroClient`:
 
-* `actionheroClient.lastLine`
+* `ActionheroClient.lastLine`
   * This is the last parsed JSON message received from the server (chronologically, not by messageID)
-* `actionheroClient.userMessages`
+* `ActionheroClient.userMessages`
   * a hash which contains the latest `say` message from all users
-* `actionheroClient.log`
+* `ActionheroClient.log`
   * An array of the last n parsable JSON replies from the server
   * each entry is of the form {data, timeStamp} where data was the server's full response
-* `actionheroClient.messageCount`
+* `ActionheroClient.messageCount`
   * An integer counting the number of messages received from the server
 
 ## Example
 
 ```javascript
-var actionheroClient = require("actionhero-client");
-var client = new actionheroClient();
+var ActionheroClient = require("actionhero-client");
+var client = new ActionheroClient();
 
 client.on("say", function(msgBlock){
   console.log(" > SAY: " + msgBlock.message + " | from: " + msgBlock.from);
@@ -135,7 +135,7 @@ client.connect({
 }, function(){
   // get details about myself
   console.log(client.details);
-  
+
   // try an action
   var params = { key: "mykey", value: "myValue" };
   client.actionWithParams("cacheTest", params, function(err, apiResponse, delta){
@@ -145,7 +145,7 @@ client.connect({
 
   // join a chat room and talk
   client.roomAdd("defaultRoom", function(err){
-    client.say("defaultRoom", "Hello from the actionheroClient");
+    client.say("defaultRoom", "Hello from the ActionheroClient");
     client.roomLeave("defaultRoom");
   });
 
