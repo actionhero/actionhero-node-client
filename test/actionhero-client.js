@@ -139,7 +139,7 @@ describe('integration', function () {
 
   it('will translate bad status to an error callback', function (done) {
     client.roomView('someCrazyRoom', function (error, data) {
-      String(error).should.equal('Error: not member of room someCrazyRoom')
+      error.toString().should.equal('Error: not member of room someCrazyRoom')
       data.status.should.equal('not member of room someCrazyRoom')
       done()
     })
