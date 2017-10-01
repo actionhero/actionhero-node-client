@@ -3,10 +3,10 @@
   "name": "actionhero-node-client",
   "description": "ActionHero client for other node.js servers to use",
   "version": "6.0.0",
-  "homepage": "https://github.com/evantahler/actionhero-node-client",
+  "homepage": "https://github.com/actionhero/actionhero-node-client",
   "repository": {
     "type": "git",
-    "url": "git://github.com/evantahler/actionhero-node-client.git"
+    "url": "git://github.com/actionhero/actionhero-node-client.git"
   },
   "main": "lib/client.js",
   "license": "Apache-2.0",
