@@ -1,56 +1,49 @@
 var path = require('path')
+const ActionheroNodeClient = require(path.join(__dirname, 'lib', 'client.js'))
 
-var ActionheroClient = require(path.join(__dirname, '/lib/actionhero-client.js'))
-var client = new ActionheroClient()
+async function main () {
+  const client = new ActionheroNodeClient()
 
-client.on('say', function (msgBlock) {
-  console.log(' > SAY: ' + msgBlock.message + ' | from: ' + msgBlock.from)
-})
+  client.on('say', (message) => {
+    console.log(' > SAY: ' + message.message + ' | from: ' + message.from)
+  })
 
-client.on('welcome', function (msg) {
-  console.log('WELCOME: ' + msg)
-})
+  client.on('welcome', (welcome) => {
+    console.log('WELCOME: ' + welcome)
+  })
 
-client.on('error', function (error, data) {
-  console.log('ERROR: ' + error)
-  if (data) { console.log(data) }
-})
+  client.on('error', (error) => {
+    console.log('ERROR: ' + error)
+  })
 
-client.on('end', function () {
-  console.log('Connection Ended')
-})
+  client.on('end', () => {
+    console.log('Connection Ended')
+  })
 
-client.on('timeout', function (error, request, caller) {
-  if (error) { throw error }
-  console.log(request + ' timed out')
-})
+  client.on('timeout', (request, caller) => {
+    console.log(request + ' timed out')
+  })
 
-client.connect({
-  host: '127.0.0.1',
-  port: '5000'
-}, function () {
+  await client.connect({host: '127.0.0.1', port: '5000'})
+
   // get details about myself
-  console.log(client.details)
+  console.log('My Details: ', client.details)
 
   // try an action
-  var params = { key: 'mykey', value: 'myValue' }
-  client.actionWithParams('cacheTest', params, function (error, apiResponse, delta) {
-    if (error) { throw error }
-    console.log('cacheTest action response: ' + apiResponse.cacheTestResults.saveResp)
-    console.log(' ~ request duration: ' + delta + 'ms')
-  })
+  const params = { key: 'mykey', value: 'myValue' }
+  let {error, data, delta} = await client.actionWithParams('cacheTest', params)
+  if (error) { throw error }
+  console.log('cacheTest action response: ', data)
+  console.log(' ~ request duration: ', delta)
 
   // join a chat room and talk
-  client.roomAdd('defaultRoom', function (error) {
-    if (error) { throw error }
-    client.say('defaultRoom', 'Hello from the actionheroClient')
-    client.roomLeave('defaultRoom')
-  })
+  await client.roomAdd('defaultRoom')
+  await client.say('defaultRoom', 'Hello from the actionheroClient')
+  await client.roomLeave('defaultRoom')
 
   // leave
-  setTimeout(function () {
-    client.disconnect(function () {
-      console.log('all done!')
-    })
-  }, 1000)
-})
+  await client.disconnect()
+  console.log('all done!')
+}
+
+main()

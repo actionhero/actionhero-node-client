@@ -1,14 +1,14 @@
 {
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "actionhero-client",
-  "description": "actionhero client in JS for other node servers to use",
-  "version": "5.0.0",
-  "homepage": "https://github.com/evantahler/actionhero-client",
+  "description": "ActionHero client for other node.js servers to use",
+  "version": "6.0.0",
+  "homepage": "https://github.com/evantahler/actionhero-node-client",
   "repository": {
     "type": "git",
-    "url": "git://github.com/evantahler/actionhero-client.git"
+    "url": "git://github.com/evantahler/actionhero-node-client.git"
   },
-  "main": "lib/actionhero-client.js",
+  "main": "lib/client.js",
   "license": "Apache-2.0",
   "keywords": [
     "socket",
@@ -18,21 +18,26 @@
     "request"
   ],
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "devDependencies": {
-    "actionhero": "git://github.com/evantahler/actionhero.git#master",
-    "mocha": "^3.2.0",
-    "should": "^13.0.0",
-    "standard": "^10.0.2"
+    "actionhero": "^18.0.0-beta.2",
+    "mocha": "^3.5.3",
+    "should": "^13.1.0",
+    "standard": "^10.0.3"
   },
   "standard": {
-    "globals":[
-      "it", "describe", "beforeEach"
+    "globals": [
+      "it",
+      "describe",
+      "beforeEach",
+      "before",
+      "after",
+      "afterEach"
     ]
   },
   "scripts": {
     "pretest": "standard",
-    "test": "mocha"
+    "test": "NODE_ENV=test mocha"
   }
 }
