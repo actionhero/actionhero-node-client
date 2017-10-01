@@ -7,7 +7,9 @@ This library makes it easy for one nodeJS process to talk to a remote [actionher
 
 This library makes use of actionhero's TCP socket connections to enable fast, stateful connections.  This library also allows for many concurrent and asynchronous requests to be running in parallel by making use of actionhero's message counter.
 
-**note:** This Library is a server-server communication library, and is NOT the same as the websocket client library that is generated via the actionhero server.
+**notes:**
+* This Library is a server-server communication library, and is NOT the same as the websocket client library that is generated via the actionhero server.
+* Node.js v8+ is required to use this package, as it uses `async/await`.
 
 ## Setup
 
