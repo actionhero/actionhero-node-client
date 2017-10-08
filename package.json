@@ -21,9 +21,9 @@
     "node": ">=8.0.0"
   },
   "devDependencies": {
-    "actionhero": "^18.0.0-beta.3",
-    "mocha": "^4.0.0",
-    "should": "^13.1.0",
+    "actionhero": "^18.0.0",
+    "mocha": "^4.0.1",
+    "should": "^13.1.1",
     "standard": "^10.0.3"
   },
   "standard": {
