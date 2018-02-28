@@ -53,28 +53,28 @@ var defaults = {
 
 One you are connected (by waiting for the "connected" event or using the `connect` callback), the following methods will be available to you:
 
-* `async ActionheroNodeClient.connect()`
-* `async ActionheroNodeClient.disconnect()`
-* `{error, data, delta} = async ActionheroNodeClient.paramAdd(key, value)`
+* `await ActionheroNodeClient.connect()`
+* `await ActionheroNodeClient.disconnect()`
+* `{error, data, delta} = await ActionheroNodeClient.paramAdd(key, value)`
   * remember that both key and value must pass JSON.stringify
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.paramDelete(key)`
+* `{error, data, delta} = await ActionheroNodeClient.paramDelete(key)`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.paramsDelete()`
+* `{error, data, delta} = await ActionheroNodeClient.paramsDelete()`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.paramView(key)`
+* `{error, data, delta} = await ActionheroNodeClient.paramView(key)`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.paramsView()`
+* `{error, data, delta} = await ActionheroNodeClient.paramsView()`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.details()`
+* `{error, data, delta} = await ActionheroNodeClient.details()`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.roomView(room)`
+* `{error, data, delta} = await ActionheroNodeClient.roomView(room)`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.roomAdd(room)`
+* `{error, data, delta} = await ActionheroNodeClient.roomAdd(room)`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.roomLeave(room)`
+* `{error, data, delta} = await ActionheroNodeClient.roomLeave(room)`
   * The return value will contain the response from the server (`data`), a possible error (`error`), and the response's duration (`delta`)
-* `{error, data, delta} = async ActionheroNodeClient.say(room, msg)`
+* `{error, data, delta} = await ActionheroNodeClient.say(room, msg)`
   * `msg` can be a string or an Object
 * {error, data, delta} = await `ActionheroNodeClient.action(action)`
   * this action method will not set or unset any params, and use those already set by `paramAdd`
