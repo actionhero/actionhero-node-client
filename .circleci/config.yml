@@ -3,7 +3,7 @@ version: 2
 refrences:
 
   cache-options: &cache-options
-    key: package-cache-{{ checksum "package.json" }}
+    key: package-cache-{{ checksum "package-lock.json" }}
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
           command: npm install
       - run:
           name: test-reporter-setup
-          command: npm install mocha-junit-reporter --no-save
+          command: npm install mocha-junit-reporter
       - save_cache:
           <<: *cache-options
           paths:
