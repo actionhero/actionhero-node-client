@@ -19,7 +19,7 @@ jobs:
           command: npm install
       - run:
           name: test-reporter-setup
-          command: npm install mocha-junit-reporter
+          command: npm install mocha-junit-reporter --no-save
       - save_cache:
           <<: *cache-options
           paths:
