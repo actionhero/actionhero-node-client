@@ -37,7 +37,7 @@
     ]
   },
   "scripts": {
-    "pretest": "standard",
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha",
+    "pretest": "standard"
   }
 }
