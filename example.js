@@ -24,14 +24,14 @@ async function main () {
     console.log(request + ' timed out')
   })
 
-  await client.connect({host: '127.0.0.1', port: '5000'})
+  await client.connect({ host: '127.0.0.1', port: '5000' })
 
   // get details about myself
   console.log('My Details: ', client.details)
 
   // try an action
   const params = { key: 'mykey', value: 'myValue' }
-  let {error, data, delta} = await client.actionWithParams('cacheTest', params)
+  let { error, data, delta } = await client.actionWithParams('cacheTest', params)
   if (error) { throw error }
   console.log('cacheTest action response: ', data)
   console.log(' ~ request duration: ', delta)
