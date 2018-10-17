@@ -107,7 +107,8 @@ describe('integration', () => {
 
     let { error: error4, data } = await client.paramsView()
     should.not.exist(error4)
-    Object.keys(data.data).length.should.equal(1)
+    Object.keys(data.data).length.should.equal(2)
+    should.exist(data.messageId)
     data.data.value.should.equal('v2')
   })
 
