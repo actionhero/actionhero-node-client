@@ -31,7 +31,7 @@ async function main () {
 
   // try an action
   const params = { key: 'mykey', value: 'myValue' }
-  let { error, data, delta } = await client.actionWithParams('cacheTest', params)
+  const { error, data, delta } = await client.actionWithParams('cacheTest', params)
   if (error) { throw error }
   console.log('cacheTest action response: ', data)
   console.log(' ~ request duration: ', delta)
