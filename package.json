@@ -24,7 +24,7 @@
     "actionhero": "^19.2.1",
     "mocha": "^6.2.0",
     "should": "^13.2.3",
-    "standard": "^13.0.2"
+    "standard": "^14.0.0"
   },
   "standard": {
     "globals": [
