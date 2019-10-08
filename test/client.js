@@ -1,17 +1,18 @@
 const should = require('should')
 const path = require('path')
 const ActionheroNodeClient = require(path.join(__dirname, '/../lib/client.js'))
-const ActionHero = require('actionhero')
-const actionhero = new ActionHero.Process()
+const { Process } = require('actionhero')
 
 const port = 9000
-
+process.chdir(path.join(__dirname, '..', 'node_modules', 'actionhero'))
 process.env.ACTIONHERO_CONFIG = path.join(__dirname, '..', 'node_modules', 'actionhero', 'config')
+
+const actionhero = new Process()
 
 const serverConfig = {
   general: {
     id: 'test-server-1',
-    workers: 1,
+    workers: 0,
     developmentMode: false,
     startingChatRooms: {
       defaultRoom: {},
@@ -185,45 +186,6 @@ describe('integration', () => {
       })
 
       api.chatRoom.broadcast({}, 'defaultRoom', 'TEST MESSAGE')
-    })
-  })
-
-  it('will obey the server\'s simultaneousActions policy', async () => {
-    const response1 = client.actionWithParams('sleepTest', { sleepDuration: 100 })
-    const response2 = client.actionWithParams('sleepTest', { sleepDuration: 200 })
-    const response3 = client.actionWithParams('sleepTest', { sleepDuration: 300 })
-    const response4 = client.actionWithParams('sleepTest', { sleepDuration: 400 })
-    const response5 = client.actionWithParams('sleepTest', { sleepDuration: 500 })
-    const response6 = client.actionWithParams('sleepTest', { sleepDuration: 600 })
-
-    await response1.then(({ error, data }) => {
-      should.not.exist(error)
-      data.context.should.equal('response')
-    })
-
-    await response2.then(({ error, data }) => {
-      should.not.exist(error)
-      data.context.should.equal('response')
-    })
-
-    await response3.then(({ error, data }) => {
-      should.not.exist(error)
-      data.context.should.equal('response')
-    })
-
-    await response4.then(({ error, data }) => {
-      should.not.exist(error)
-      data.context.should.equal('response')
-    })
-
-    await response5.then(({ error, data }) => {
-      should.not.exist(error)
-      data.context.should.equal('response')
-    })
-
-    await response6.then(({ error, data }) => {
-      String(error).should.equal('Error: you have too many pending requests')
-      data.error.should.equal('you have too many pending requests')
     })
   })
 

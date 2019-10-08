@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "actionhero-node-client",
   "description": "ActionHero client for other node.js servers to use",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "homepage": "https://github.com/actionhero/actionhero-node-client",
   "repository": {
     "type": "git",
