@@ -21,7 +21,7 @@
     "node": ">=8.0.0"
   },
   "devDependencies": {
-    "actionhero": "^19.2.2",
+    "actionhero": "^20.0.0",
     "mocha": "^6.2.0",
     "should": "^13.2.3",
     "standard": "^14.1.0"
