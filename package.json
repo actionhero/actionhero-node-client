@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "actionhero": "^20.0.0",
-    "mocha": "^6.2.0",
+    "mocha": "^7.0.1",
     "should": "^13.2.3",
     "standard": "^14.1.0"
   },
