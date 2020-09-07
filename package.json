@@ -2,13 +2,13 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "actionhero-node-client",
   "description": "ActionHero client for other node.js servers to use",
-  "version": "7.1.0",
+  "version": "8.0.0",
   "homepage": "https://github.com/actionhero/actionhero-node-client",
   "repository": {
     "type": "git",
     "url": "git://github.com/actionhero/actionhero-node-client.git"
   },
-  "main": "lib/client.js",
+  "main": "dist/client.js",
   "license": "Apache-2.0",
   "keywords": [
     "socket",
@@ -18,29 +18,31 @@
     "request"
   ],
   "engines": {
-    "node": ">=8.0.0"
-  },
-  "devDependencies": {
-    "actionhero": "^20.0.0",
-    "mocha": "^7.1.2",
-    "should": "^13.2.3",
-    "standard": "^14.1.0"
-  },
-  "standard": {
-    "globals": [
-      "it",
-      "describe",
-      "beforeEach",
-      "before",
-      "after",
-      "afterEach"
-    ]
+    "node": ">=12.0.0"
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha",
-    "pretest": "standard"
+    "test": "echo 'TODO'",
+    "pretest": "prettier --check __tests__ src",
+    "prepare": "rm -rf dist && tsc --declaration"
   },
   "dependencies": {
-    "uuid": "^8.0.0"
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.13",
+    "actionhero-socket-server": "^2.1.1",
+    "jest": "^26.4.2",
+    "prettier": "^2.1.1",
+    "ts-jest": "^26.3.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>/tmp"
+    ],
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    }
   }
 }
