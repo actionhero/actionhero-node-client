@@ -107,7 +107,7 @@ export default class ActionheroNodeClient extends EventEmitter {
         this.reconnectAttempts = 0;
         await this.detailsView();
         this.emit("connected");
-        return resolve();
+        return resolve(null);
       });
 
       this.connection.on("error", (error) => {
