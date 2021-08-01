@@ -1,7 +1,7 @@
 # ActionheroNodeClient
 For one node.js servers talking to another ActionHero server, over the socket protocol.
 
-![NPM Version](https://img.shields.io/npm/v/actionhero-node-client.svg?style=flat) ![Node Version](https://img.shields.io/node/v/actionhero-node-client.svg?style=flat) [![Greenkeeper badge](https://badges.greenkeeper.io/actionhero/actionhero-node-client.svg)](https://greenkeeper.io/) [![Build Status](https://circleci.com/gh/actionhero/actionhero-node-client.png)](https://circleci.com/gh/actionhero/actionhero-node-client.png)
+![NPM Version](https://img.shields.io/npm/v/actionhero-node-client.svg?style=flat) ![Node Version](https://img.shields.io/node/v/actionhero-node-client.svg?style=flat) [![Greenkeeper badge](https://badges.greenkeeper.io/actionhero/actionhero-node-client.svg)](https://greenkeeper.io/) [![test](https://github.com/actionhero/actionhero-node-client/actions/workflows/test.yml/badge.svg)](https://github.com/actionhero/actionhero-node-client/actions/workflows/test.yml)
 
 This library makes it easy for one nodeJS process to talk to a remote [actionhero](https://www.actionherojs.com/) server.
 
