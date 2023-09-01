@@ -16,7 +16,7 @@ let client: ActionheroNodeClient;
 describe("integration", () => {
   beforeAll(async () => {
     process.chdir(
-      path.join(__dirname, "..", "node_modules", "actionhero-socket-server")
+      path.join(__dirname, "..", "node_modules", "actionhero-socket-server"),
     );
     apiProcess = spawn("npm", ["run", "dev"]);
 
