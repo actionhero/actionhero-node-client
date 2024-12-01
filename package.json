@@ -26,7 +26,7 @@
     "prepare": "rm -rf dist && tsc --declaration"
   },
   "dependencies": {
-    "uuid": "^10.0.0"
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.4",
